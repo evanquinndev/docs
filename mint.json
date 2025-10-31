@@ -1,0 +1,114 @@
+{
+  "name": "Quinn CRM",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#3B82F6",
+    "light": "#60A5FA",
+    "dark": "#1E40AF",
+    "background": {
+      "dark": "#0F172A"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Dashboard",
+      "url": "https://your-quinn-instance.replit.app"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "https://your-quinn-instance.replit.app/api/auth/register"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    },
+    {
+      "name": "Integrations",
+      "url": "integrations"
+    },
+    {
+      "name": "Guides",
+      "url": "guides"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Community",
+      "icon": "discord",
+      "url": "https://discord.gg/quinn"
+    },
+    {
+      "name": "Support",
+      "icon": "envelope",
+      "url": "mailto:support@quinn.app"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction",
+        "quickstart",
+        "authentication",
+        "core-concepts"
+      ]
+    },
+    {
+      "group": "Features",
+      "pages": [
+        "features/crm-overview"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/introduction",
+        {
+          "group": "Authentication",
+          "pages": [
+            "api-reference/auth/login"
+          ]
+        }
+      ]
+    }
+  ],
+  "footerSocials": {
+    "twitter": "https://twitter.com/quinn",
+    "linkedin": "https://linkedin.com/company/quinn"
+  },
+  "openapi": "openapi.json",
+  "api": {
+    "baseUrl": "https://your-quinn-instance.replit.app",
+    "playground": {
+      "mode": "show"
+    },
+    "auth": {
+      "method": "cookie",
+      "name": "sessionId"
+    }
+  },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true,
+    "raiseIssue": true
+  },
+  "search": {
+    "prompt": "Search Quinn docs..."
+  },
+  "analytics": {
+    "mixpanel": {
+      "projectToken": "YOUR_MIXPANEL_TOKEN"
+    }
+  },
+  "ai": {
+    "enabled": true,
+    "name": "Quinn Assistant",
+    "prompt": "You are a helpful AI assistant for Quinn CRM documentation. Help users understand features, integrate services, and use the API effectively. Provide code examples when appropriate. Quinn is an AI-powered CRM for equipment rental businesses with features like: customer management, sales pipeline, inventory tracking, AI task extraction, voice agent (Vapi), email sync (Gmail/Outlook), call tracking (Twilio/Aircall), and data warehouse integration (Snowflake). Be concise, technical but friendly, and always link to relevant documentation pages."
+  }
+}

@@ -1,33 +1,310 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'API Reference'
+description: 'Complete API reference for Quinn CRM with 432 endpoints'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Overview
 
-## Welcome
-
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+Quinn CRM provides a comprehensive RESTful API with **432 endpoints** across **69 categories**. All endpoints use session-based authentication and return JSON responses.
 
 <Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+  title="Interactive API Playground"
+  icon="play"
+  href="#try-it-live"
 >
-  View the OpenAPI specification file
+  Test API endpoints directly in your browser with our interactive playground
 </Card>
+
+## Base URL
+
+```
+https://your-quinn-instance.replit.app
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API endpoints (except login/register) require authentication. See [Authentication Guide](/authentication) for details.
+
+```javascript
+// Include session cookie in all requests
+fetch('https://your-instance.replit.app/api/customers', {
+  credentials: 'include'
+});
+```
+
+## API Categories
+
+<CardGroup cols={3}>
+  <Card title="Authentication" icon="lock" href="/api-reference/auth/login">
+    Login, register, logout, session management
+  </Card>
+  
+  <Card title="Customers" icon="users" href="/api-reference/customers/list">
+    Customer CRUD, lifecycle management, analytics
+  </Card>
+  
+  <Card title="Leads" icon="user-plus" href="/api-reference/leads/list">
+    Lead management, qualification, conversion
+  </Card>
+  
+  <Card title="Opportunities" icon="chart-line" href="/api-reference/opportunities/list">
+    Sales pipeline, deal tracking, forecasting
+  </Card>
+  
+  <Card title="Tasks" icon="check" href="/api-reference/tasks/list">
+    Task management, AI-generated actions
+  </Card>
+  
+  <Card title="Inventory" icon="boxes">
+    Equipment catalog, availability, pricing
+  </Card>
+  
+  <Card title="Transactions" icon="receipt">
+    Rental orders, invoices, payment tracking
+  </Card>
+  
+  <Card title="Communications" icon="comments">
+    Calls, emails, SMS, activity logging
+  </Card>
+  
+  <Card title="Analytics" icon="chart-bar">
+    Reports, metrics, insights, forecasts
+  </Card>
+</CardGroup>
+
+## Quick Links
+
+### Most Used Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/customers` | GET | List all customers |
+| `/api/leads` | POST | Create a new lead |
+| `/api/opportunities` | GET | View sales pipeline |
+| `/api/tasks` | POST | Create task |
+| `/api/auth/login` | POST | Authenticate user |
+
+### Featured Endpoints
+
+<AccordionGroup>
+  <Accordion title="Customer Intelligence">
+    **GET** `/api/customer-intelligence/:id`
+    
+    Get AI-powered insights for a customer:
+    - Sentiment analysis from recent communications
+    - Recommended next actions
+    - Upsell/cross-sell opportunities
+    - Risk assessment
+  </Accordion>
+
+  <Accordion title="AI Task Extraction">
+    **POST** `/api/voice-memos/:id/extract-tasks`
+    
+    Extract action items from voice recording:
+    - GPT-4 powered analysis
+    - Automatic priority assignment
+    - Owner recommendations
+    - Due date suggestions
+  </Accordion>
+
+  <Accordion title="Lead Conversion">
+    **POST** `/api/leads/:id/convert`
+    
+    Convert lead to customer:
+    - Creates customer record
+    - Updates unified contact
+    - Maintains relationship history
+    - Triggers workflow automations
+  </Accordion>
+
+  <Accordion title="Opportunity Revenue Prediction">
+    **GET** `/api/opportunities/:id/ai-insights`
+    
+    AI predictions for opportunity:
+    - Likely close amount
+    - Win probability
+    - Expected timeline
+    - Recommended actions
+  </Accordion>
+</AccordionGroup>
+
+## Response Format
+
+All endpoints return JSON with consistent structure:
+
+### Success Response
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
+{
+  "data": [...],
+  "pagination": {
+    "currentPage": 1,
+    "totalPages": 10,
+    "totalItems": 487,
+    "pageSize": 50
   }
-]
+}
 ```
+
+### Error Response
+
+```json
+{
+  "error": "Validation failed",
+  "message": "Email is required",
+  "code": "VALIDATION_ERROR",
+  "details": [...]
+}
+```
+
+## HTTP Status Codes
+
+| Code | Meaning | Description |
+|------|---------|-------------|
+| 200 | OK | Request successful |
+| 201 | Created | Resource created successfully |
+| 400 | Bad Request | Invalid request parameters |
+| 401 | Unauthorized | Authentication required |
+| 403 | Forbidden | Insufficient permissions |
+| 404 | Not Found | Resource doesn't exist |
+| 429 | Too Many Requests | Rate limit exceeded |
+| 500 | Internal Server Error | Server error (contact support) |
+
+## Rate Limits
+
+| Endpoint Type | Limit | Window |
+|---------------|-------|--------|
+| Authentication | 10 requests | 1 minute |
+| Read (GET) | 100 requests | 1 minute |
+| Write (POST/PUT/DELETE) | 50 requests | 1 minute |
+| Webhooks | 1000 requests | 1 minute |
+
+Exceeded limits return `429 Too Many Requests` with `Retry-After` header.
+
+## Pagination
+
+List endpoints support pagination:
+
+```bash
+GET /api/customers?page=2&limit=25
+```
+
+**Parameters:**
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 50, max: 100)
+
+## Filtering
+
+Most endpoints support filtering:
+
+```bash
+# Search
+GET /api/customers?search=acme
+
+# Filter by field
+GET /api/leads?status=qualified
+
+# Date range
+GET /api/transactions?startDate=2024-01-01&endDate=2024-12-31
+
+# Multiple filters
+GET /api/opportunities?stageId=uuid&probability=75
+```
+
+## Sorting
+
+Use `sortBy` and `sortOrder`:
+
+```bash
+GET /api/customers?sortBy=lifetimeOrders&sortOrder=desc
+```
+
+**Options:**
+- `sortOrder`: `asc` or `desc`
+- `sortBy`: any field name (varies by endpoint)
+
+## Webhooks
+
+Quinn can send real-time webhooks for events:
+
+```json
+{
+  "event": "lead.created",
+  "timestamp": "2024-10-31T12:34:56Z",
+  "organizationId": "uuid",
+  "data": {
+    "id": "uuid",
+    "leadName": "John Contractor",
+    "email": "john@contractor.com"
+  }
+}
+```
+
+Configure webhook URLs in **Settings** → **Webhooks**.
+
+## SDKs & Libraries
+
+<Info>
+Official SDKs coming soon! For now, use the REST API directly with your favorite HTTP client.
+</Info>
+
+**Recommended Libraries:**
+- **JavaScript**: `fetch` (native) or `axios`
+- **Python**: `requests` or `httpx`
+- **PHP**: `GuzzleHTTP`
+- **Ruby**: `Faraday` or `HTTParty`
+- **Go**: `net/http` (stdlib)
+
+## OpenAPI Specification
+
+Download the full OpenAPI spec:
+
+<Card
+  title="openapi.json"
+  icon="download"
+  href="/openapi.json"
+>
+  Import into Postman, Insomnia, or any OpenAPI-compatible tool
+</Card>
+
+## Try It Live
+
+Use the interactive playground on any endpoint page to:
+- ✅ Test requests with your credentials
+- ✅ See real responses from your Quinn instance
+- ✅ View request/response schemas
+- ✅ Generate code snippets
+
+<CardGroup cols={2}>
+  <Card
+    title="Start with Authentication"
+    icon="lock"
+    href="/api-reference/auth/login"
+  >
+    Test login endpoint first
+  </Card>
+  
+  <Card
+    title="Browse All Endpoints"
+    icon="list"
+    href="/api-reference/customers/list"
+  >
+    Explore 432 endpoints
+  </Card>
+</CardGroup>
+
+## Need Help?
+
+<CardGroup cols={3}>
+  <Card title="Guides" icon="book" href="/guides/webhooks">
+    Step-by-step integration guides
+  </Card>
+  
+  <Card title="Discord Community" icon="discord" href="https://discord.gg/quinn">
+    Ask questions, share tips
+  </Card>
+  
+  <Card title="Email Support" icon="envelope" href="mailto:support@quinn.app">
+    Get help from our team
+  </Card>
+</CardGroup>

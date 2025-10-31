@@ -1,0 +1,352 @@
+---
+title: 'Authentication'
+description: 'Learn how to authenticate with the Quinn CRM API'
+---
+
+## Overview
+
+Quinn uses **session-based authentication** with HTTP-only cookies. This provides security while maintaining simplicity for client applications.
+
+## Authentication Flow
+
+<Steps>
+  <Step title="Login">
+    Send your credentials to the login endpoint:
+    
+    ```bash
+    POST /api/auth/login
+    Content-Type: application/json
+    ```
+    
+    ```json
+    {
+      "email": "user@yourcompany.com",
+      "password": "your-password"
+    }
+    ```
+    
+    **Response**:
+    ```json
+    {
+      "message": "Login successful",
+      "user": {
+        "id": "uuid",
+        "email": "user@yourcompany.com",
+        "organizationId": "uuid",
+        "role": "admin"
+      }
+    }
+    ```
+    
+    The server returns a `Set-Cookie` header with `sessionId` (HTTP-only, secure).
+  </Step>
+
+  <Step title="Make Authenticated Requests">
+    Include the session cookie in subsequent requests:
+    
+    ```javascript
+    fetch('https://your-instance.replit.app/api/customers', {
+      credentials: 'include' // Automatically sends cookies
+    });
+    ```
+    
+    ```bash
+    curl https://your-instance.replit.app/api/customers \
+      -H "Cookie: sessionId=YOUR_SESSION_ID"
+    ```
+  </Step>
+
+  <Step title="Logout">
+    End your session:
+    
+    ```bash
+    POST /api/auth/logout
+    ```
+    
+    This invalidates the session and clears the cookie.
+  </Step>
+</Steps>
+
+## Session Management
+
+### Session Duration
+
+- **Default**: 7 days
+- **Activity Extension**: Sessions extend on each request
+- **Absolute Maximum**: 30 days
+
+### Session Storage
+
+Sessions are stored in PostgreSQL with the following data:
+- User ID
+- Organization ID  
+- Email
+- Role
+- Created/Expires timestamps
+- Impersonation state (for support)
+
+## Multi-Tenant Isolation
+
+<Warning>
+All API requests are automatically scoped to your organization. You can only access data belonging to your organization.
+</Warning>
+
+When you authenticate, your session includes:
+- `userId`: Your unique user ID
+- `organizationId`: Your organization's ID
+- `role`: Your permission level
+
+Every API endpoint validates:
+1. ✅ Session exists and is valid
+2. ✅ User belongs to organization
+3. ✅ User has required permissions for that endpoint
+
+## Role-Based Access Control
+
+Quinn has three role levels:
+
+| Role | Description | Permissions |
+|------|-------------|-------------|
+| **user** | Standard team member | Read/write access to CRM data |
+| **admin** | Organization administrator | All user permissions + organization settings, user management, billing |
+| **super_admin** | Platform administrator | Quinn team only - cross-organization support tools |
+
+### Permission Examples
+
+```javascript
+// ✅ All authenticated users
+GET /api/customers
+POST /api/tasks
+
+// ✅ Admin only
+PUT /api/settings/organization
+DELETE /api/organization/users/:userId
+POST /api/organization/invite
+
+// ✅ Super admin only  
+POST /api/admin/impersonate
+GET /api/admin/organizations
+```
+
+## Code Examples
+
+### JavaScript/TypeScript
+
+```typescript
+class QuinnAPI {
+  private baseUrl: string;
+
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl;
+  }
+
+  async login(email: string, password: string) {
+    const response = await fetch(`${this.baseUrl}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!response.ok) {
+      throw new Error('Login failed');
+    }
+
+    return response.json();
+  }
+
+  async getCustomers() {
+    const response = await fetch(`${this.baseUrl}/api/customers`, {
+      credentials: 'include'
+    });
+
+    return response.json();
+  }
+
+  async logout() {
+    await fetch(`${this.baseUrl}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+  }
+}
+
+// Usage
+const api = new QuinnAPI('https://your-instance.replit.app');
+await api.login('admin@company.com', 'password');
+const customers = await api.getCustomers();
+await api.logout();
+```
+
+### Python
+
+```python
+import requests
+
+class QuinnAPI:
+    def __init__(self, base_url):
+        self.base_url = base_url
+        self.session = requests.Session()
+
+    def login(self, email, password):
+        response = self.session.post(
+            f"{self.base_url}/api/auth/login",
+            json={"email": email, "password": password}
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def get_customers(self):
+        response = self.session.get(f"{self.base_url}/api/customers")
+        response.raise_for_status()
+        return response.json()
+
+    def logout(self):
+        self.session.post(f"{self.base_url}/api/auth/logout")
+
+# Usage
+api = QuinnAPI("https://your-instance.replit.app")
+api.login("admin@company.com", "password")
+customers = api.get_customers()
+api.logout()
+```
+
+### cURL
+
+```bash
+# Login and save cookies
+curl -X POST https://your-instance.replit.app/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@company.com","password":"your-password"}' \
+  -c cookies.txt
+
+# Use saved cookies for requests
+curl https://your-instance.replit.app/api/customers \
+  -b cookies.txt
+
+# Logout
+curl -X POST https://your-instance.replit.app/api/auth/logout \
+  -b cookies.txt
+```
+
+## Security Best Practices
+
+<AccordionGroup>
+  <Accordion title="Always Use HTTPS">
+    Never send credentials over HTTP. Session cookies are marked as `Secure` and will only be sent over HTTPS connections.
+  </Accordion>
+
+  <Accordion title="Implement CSRF Protection">
+    If building a web application, implement CSRF tokens for state-changing operations (POST, PUT, DELETE).
+  </Accordion>
+
+  <Accordion title="Rotate Passwords Regularly">
+    Encourage users to change passwords every 90 days. Quinn supports password requirements via organization settings.
+  </Accordion>
+
+  <Accordion title="Use Environment Variables">
+    Never hardcode credentials. Use environment variables:
+    
+    ```javascript
+    const API_BASE_URL = process.env.QUINN_API_URL;
+    const API_EMAIL = process.env.QUINN_EMAIL;
+    const API_PASSWORD = process.env.QUINN_PASSWORD;
+    ```
+  </Accordion>
+
+  <Accordion title="Monitor Failed Login Attempts">
+    Quinn rate-limits login attempts (10/minute per IP). Monitor for suspicious activity via admin dashboard.
+  </Accordion>
+</AccordionGroup>
+
+## Error Handling
+
+### Common Authentication Errors
+
+| Status Code | Error | Cause | Solution |
+|-------------|-------|-------|----------|
+| 401 | Unauthorized | Missing or invalid session | Login again |
+| 403 | Forbidden | Insufficient permissions | Contact admin to upgrade role |
+| 429 | Too Many Requests | Rate limit exceeded | Wait 60 seconds |
+
+### Error Response Format
+
+```json
+{
+  "error": "Unauthorized",
+  "message": "Session expired. Please login again.",
+  "code": "SESSION_EXPIRED"
+}
+```
+
+## Advanced: Impersonation (Support)
+
+<Warning>
+Impersonation is only available to super admins for customer support purposes.
+</Warning>
+
+Super admins can impersonate users to debug issues:
+
+```bash
+POST /api/admin/impersonate
+```
+
+```json
+{
+  "userId": "user-uuid",
+  "organizationId": "org-uuid"
+}
+```
+
+While impersonating:
+- All requests are scoped to the impersonated user's organization
+- Audit log tracks all actions taken
+- Destructive actions (delete user, delete organization) are blocked
+- Session includes `isImpersonating: true` flag
+
+To end impersonation:
+
+```bash
+POST /api/admin/end-impersonation
+```
+
+## Testing Authentication
+
+Use the API playground to test authentication:
+
+<Card
+  title="Try it in the Playground"
+  icon="play"
+  href="/api-reference/auth/login"
+>
+  Test the login endpoint with your credentials
+</Card>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Session cookie not being set">
+    **Check:**
+    - Using HTTPS (required for secure cookies)
+    - `credentials: 'include'` is set in fetch options
+    - Not blocked by CORS (check `Access-Control-Allow-Credentials`)
+  </Accordion>
+
+  <Accordion title="Getting 401 on every request">
+    **Solutions:**
+    - Verify session cookie is being sent (check browser DevTools → Network → Cookies)
+    - Re-login to get fresh session
+    - Check if session expired (7 day limit)
+  </Accordion>
+
+  <Accordion title="Can't access admin endpoints">
+    **Verify:**
+    - Your role is `admin` or `super_admin` (check `/api/auth/me`)
+    - You're accessing the correct organization
+    - Feature is enabled in organization settings
+  </Accordion>
+</AccordionGroup>
+
+---
+
+Next: Learn about [Core Concepts](/core-concepts) or explore the [API Reference](/api-reference/introduction).

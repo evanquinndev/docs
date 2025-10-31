@@ -1,0 +1,183 @@
+---
+title: "Login"
+api: "POST /api/auth/login"
+description: "Authenticate a user and receive a session cookie"
+---
+
+## Overview
+
+Authenticates a user with email and password. On success, sets an HTTP-only session cookie that must be included in all subsequent requests.
+
+## Request Body
+
+<ParamField body="email" type="string" required>
+  User's email address
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  User's password (minimum 8 characters)
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string">
+  Success message
+</ResponseField>
+
+<ResponseField name="user" type="object">
+  User object containing:
+  
+  <Expandable title="user properties">
+    <ResponseField name="id" type="string">
+      User's unique identifier (UUID)
+    </ResponseField>
+    
+    <ResponseField name="email" type="string">
+      User's email address
+    </ResponseField>
+    
+    <ResponseField name="organizationId" type="string">
+      User's organization ID (UUID)
+    </ResponseField>
+    
+    <ResponseField name="role" type="string">
+      User's role: `user`, `admin`, or `super_admin`
+    </ResponseField>
+    
+    <ResponseField name="firstName" type="string">
+      User's first name
+    </ResponseField>
+    
+    <ResponseField name="lastName" type="string">
+      User's last name
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X POST https://your-instance.replit.app/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@yourcompany.com",
+    "password": "your-secure-password"
+  }' \
+  -c cookies.txt
+```
+
+```javascript JavaScript
+const response = await fetch('https://your-instance.replit.app/api/auth/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  credentials: 'include',
+  body: JSON.stringify({
+    email: 'admin@yourcompany.com',
+    password: 'your-secure-password'
+  })
+});
+
+const data = await response.json();
+console.log(data.user);
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    'https://your-instance.replit.app/api/auth/login',
+    json={
+        'email': 'admin@yourcompany.com',
+        'password': 'your-secure-password'
+    }
+)
+
+data = response.json()
+print(data['user'])
+
+# Save session for future requests
+session = requests.Session()
+session.post(url, json=credentials)
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success (200)
+{
+  "message": "Login successful",
+  "user": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "email": "admin@yourcompany.com",
+    "organizationId": "660e8400-e29b-41d4-a716-446655440000",
+    "role": "admin",
+    "firstName": "John",
+    "lastName": "Doe"
+  }
+}
+```
+
+```json Error - Invalid Credentials (401)
+{
+  "error": "Invalid credentials",
+  "message": "Email or password is incorrect"
+}
+```
+
+```json Error - Too Many Attempts (429)
+{
+  "error": "Too many requests",
+  "message": "Maximum login attempts exceeded. Please try again in 60 seconds."
+}
+```
+</ResponseExample>
+
+## Notes
+
+<Info>
+The session cookie (`sessionId`) is automatically set in the response headers. It expires after 7 days of inactivity.
+</Info>
+
+<Warning>
+Login attempts are rate-limited to 10 per minute per IP address to prevent brute force attacks.
+</Warning>
+
+## Session Cookie
+
+The response includes a `Set-Cookie` header:
+
+```
+Set-Cookie: sessionId=abc123...; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=604800
+```
+
+**Cookie Properties:**
+- `HttpOnly`: Cannot be accessed by JavaScript (security)
+- `Secure`: Only sent over HTTPS
+- `SameSite=Strict`: CSRF protection
+- `Max-Age`: 7 days (604800 seconds)
+
+## Using the Session
+
+Include the session cookie in all subsequent requests:
+
+```javascript
+// Fetch automatically includes cookies when credentials: 'include'
+fetch('https://your-instance.replit.app/api/customers', {
+  credentials: 'include'
+});
+```
+
+## Next Steps
+
+After logging in:
+1. **Get user info**: `GET /api/auth/me`
+2. **Fetch data**: Use any authenticated endpoint
+3. **Logout**: `POST /api/auth/logout` when done
+
+<Card
+  title="View All Auth Endpoints"
+  icon="lock"
+  href="/api-reference/auth/register"
+>
+  Explore register, logout, password reset, and more
+</Card>

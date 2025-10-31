@@ -1,0 +1,74 @@
+# Quinn CRM Documentation
+
+> AI-powered customer relationship management for equipment rental businesses
+
+## Quick Links
+
+- Introduction: /introduction
+- Quickstart Guide: /quickstart
+- API Reference: /api-reference/introduction
+- Authentication: /authentication
+
+## Core Features
+
+### Customer Management
+Unified contact database with automatic enrichment, lifetime value tracking, and AI-powered insights.
+
+### AI Capabilities
+- Task extraction from calls and emails
+- Lead scoring (0-7 scale)
+- Revenue prediction
+- Sentiment analysis
+
+### Communications
+- Voice calls via Twilio/Aircall
+- 24/7 AI voice agent (Vapi)
+- 2-way email sync (Gmail/Outlook)
+- SMS messaging
+
+### Sales Pipeline
+Visual pipeline management with AI-powered stage drift detection and revenue forecasting.
+
+### Integrations
+Twilio, Aircall, Gmail, Outlook, Vapi, OpenAI, Snowflake, Ocean.io, LeadMagic, Mapbox
+
+## API Overview
+
+432 RESTful endpoints across 69 categories:
+- Authentication
+- Customers & Leads
+- Opportunities
+- Tasks
+- Inventory & Transactions
+- Communications
+- Analytics
+
+Authentication: Session-based with HTTP-only cookies
+
+## Key Concepts
+
+**Multi-Tenant:** All data scoped to organizationId
+**Contacts:** Unified system for customers, leads, unknown contacts
+**AI-Native:** GPT-4 powers task extraction, scoring, predictions
+**Real-Time:** Webhooks for instant updates
+
+## Popular Endpoints
+
+- POST /api/auth/login - Authenticate user
+- GET /api/customers - List customers
+- POST /api/leads - Create lead
+- GET /api/opportunities - View pipeline
+- POST /api/tasks - Create task
+
+## Integration Guides
+
+- Twilio Setup: /integrations/twilio
+- Gmail Sync: /integrations/gmail
+- Vapi Voice Agent: /guides/voice-agent-setup
+- Snowflake Import: /integrations/snowflake
+
+## Support
+
+- Email: support@quinn.app
+- Documentation: https://docs.quinn.app
+- API Playground: Interactive testing on all endpoint pages

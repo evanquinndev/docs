@@ -1,0 +1,238 @@
+---
+title: 'CRM Overview'
+description: 'Explore Quinn's comprehensive CRM capabilities with interactive demos'
+---
+
+## Complete CRM Solution
+
+Quinn provides a full-featured CRM designed specifically for equipment rental businesses. Experience the power of AI-driven customer management with these interactive demonstrations.
+
+## Equipment Catalog Management
+
+Manage your entire equipment inventory with real-time availability tracking, dynamic pricing, and intelligent recommendations.
+
+<EquipmentCatalog />
+
+**Key Features:**
+- Real-time availability tracking
+- Multi-tier pricing (daily/weekly/monthly)
+- Category-based organization
+- Smart search and filtering
+- Low-stock alerts
+- Price optimization recommendations
+
+---
+
+## Sales Pipeline Visualization
+
+Track opportunities through your custom sales stages with AI-powered insights and revenue forecasting.
+
+<PipelineVisualizer />
+
+**Pipeline Features:**
+- Custom stage configuration
+- Drag-and-drop deal movement
+- Stage drift detection (alerts on stuck deals)
+- AI revenue predictions
+- Win probability scoring
+- Automated follow-up reminders
+
+---
+
+## AI-Powered Automation
+
+Quinn's AI capabilities work behind the scenes to automate routine tasks and provide intelligent recommendations.
+
+<AICapabilitiesDemo />
+
+**AI Capabilities:**
+- **Task Extraction**: Automatically creates action items from calls, emails, and meetings
+- **Lead Scoring**: Evaluates lead quality on a 0-7 scale using 20+ signals
+- **Revenue Prediction**: Forecasts deal values using historical data and market trends
+- **Sentiment Analysis**: Detects customer emotions and urgency in communications
+
+---
+
+## Integration Health Monitoring
+
+Quinn connects to 15+ external services with automatic health monitoring and error recovery.
+
+<IntegrationStatus />
+
+**Integration Benefits:**
+- Automatic token refresh
+- Webhook renewal handling
+- Real-time health monitoring
+- Error recovery without manual intervention
+- Quota tracking and alerts
+
+---
+
+## Additional CRM Features
+
+<CardGroup cols={2}>
+  <Card title="Customer Intelligence" icon="brain">
+    AI-powered insights for each customer:
+    - Sentiment analysis from communications
+    - Upsell/cross-sell recommendations
+    - Risk assessment
+    - Next best actions
+  </Card>
+
+  <Card title="Communication Hub" icon="comments">
+    All channels in one place:
+    - Voice calls with transcription
+    - Email sync (Gmail/Outlook)
+    - SMS messaging
+    - Meeting scheduling
+  </Card>
+
+  <Card title="Activity Timeline" icon="timeline">
+    Complete customer history:
+    - All communications logged
+    - Transaction history
+    - File attachments
+    - Notes and comments
+  </Card>
+
+  <Card title="Team Collaboration" icon="users">
+    Work together seamlessly:
+    - Owner assignment
+    - @mentions in notes
+    - Shared calendars
+    - Role-based permissions
+  </Card>
+</CardGroup>
+
+## Data Import & Export
+
+<Tabs>
+  <Tab title="CSV Import">
+    Bulk import customers, leads, and inventory via CSV:
+    
+    ```csv
+    Customer Name,Email,Phone,Company,Address,City,State,Zip
+    ABC Construction,contact@abc.com,555-0100,ABC Corp,123 Main St,Denver,CO,80202
+    ```
+    
+    Features:
+    - Automatic column mapping
+    - Duplicate detection
+    - Validation with error reporting
+    - Batch processing for large files
+  </Tab>
+
+  <Tab title="Snowflake Sync">
+    Connect to your data warehouse for automated imports:
+    
+    - Scheduled nightly imports
+    - Custom column mapping per organization
+    - Delta sync (only new/changed records)
+    - Support for customers, inventory, transactions
+  </Tab>
+
+  <Tab title="API Integration">
+    Use Quinn's REST API for real-time integration:
+    
+    ```javascript
+    // Create customer via API
+    const response = await fetch('/api/customers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        customerName: 'New Customer',
+        email: 'customer@example.com',
+        phone: '+15551234567'
+      })
+    });
+    ```
+  </Tab>
+</Tabs>
+
+## Mobile Responsive
+
+Quinn's CRM is fully responsive and works beautifully on mobile devices:
+
+- Touch-optimized interface
+- Mobile-friendly tables and forms
+- Click-to-call from customer pages
+- GPS integration for route optimization
+- Offline mode (coming soon)
+
+## Customization
+
+Tailor Quinn to your business:
+
+<AccordionGroup>
+  <Accordion title="Custom Fields">
+    Add fields specific to your business:
+    - Text, number, date, dropdown fields
+    - Required/optional configuration
+    - Validation rules
+    - Display in forms and tables
+  </Accordion>
+
+  <Accordion title="Custom Pipeline Stages">
+    Define your sales process:
+    - Create unlimited stages
+    - Set win/loss criteria
+    - Configure automation rules
+    - Set probability defaults
+  </Accordion>
+
+  <Accordion title="Email Templates">
+    Standardize communications:
+    - Reusable email templates
+    - Variable substitution
+    - HTML/plain text support
+    - Attachment support
+  </Accordion>
+
+  <Accordion title="Notification Rules">
+    Stay informed automatically:
+    - Custom notification triggers
+    - Email, SMS, in-app notifications
+    - Per-user preferences
+    - Quiet hours support
+  </Accordion>
+</AccordionGroup>
+
+## Analytics & Reporting
+
+Built-in reports and dashboards:
+
+- **Revenue Analytics**: Track MRR, ARR, growth trends
+- **Sales Performance**: Rep leaderboards, conversion rates
+- **Customer Insights**: Lifetime value, churn risk, segmentation
+- **Inventory Utilization**: Most/least rented items, revenue per item
+- **Communication Metrics**: Call volume, response times, email open rates
+
+## Security & Compliance
+
+Enterprise-grade security:
+
+- Multi-tenant data isolation
+- Role-based access control (RBAC)
+- Audit logs for all changes
+- Data encryption at rest and in transit
+- GDPR-compliant data handling
+- SOC 2 Type II compliance (coming soon)
+
+---
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card title="Try the API" icon="code" href="/api-reference/introduction">
+    Explore 432 API endpoints
+  </Card>
+  
+  <Card title="Set Up Integrations" icon="plug" href="/integrations/overview">
+    Connect Twilio, Gmail, Snowflake
+  </Card>
+  
+  <Card title="View Guides" icon="book" href="/guides/webhooks">
+    Step-by-step tutorials
+  </Card>
+</CardGroup>
